@@ -1,11 +1,14 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+var mongoose = require('mongoose')
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./controllers/index');
 var usersRouter = require('./controllers/users');
+var foodsRouter = require('./controllers/foods');
+var countriesRouter = require('./controllers/countries');
 
 var app = express();
 
@@ -21,6 +24,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/foods', foodsRouter);
+app.use('/countries', countriesRouter);
+
+
+//Database connection to MongoDB
+var globals = require('./config/globals')
+mongoose.connect(globals.db, {
+  useNewUrlParser : true,
+  useUnifiedTopology : true
+}).then(
+  (res)=> {
+    console.log('Connected to Mongo!')
+  }
+).catch(() => {
+  console.log('Error connecting to Mongo')
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
